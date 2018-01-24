@@ -1,3 +1,4 @@
-source "https://api.berkshelf.com"
+source "https://supermarket.chef.io"
 
 metadata
+cookbook "ldap", path: "../ldap-cookbook"

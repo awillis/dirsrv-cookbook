@@ -106,7 +106,7 @@ action :create do
         creates ::File.join instdir, 'dse.ldif'
         action :nothing
         subscribes :run, "template[#{tmpl}]", :immediately
-        notifies :restart, "service[dirsrv-#{new_resource.instance}]", :immediately
+        notifies :restart, "systemd_unit[dirsrv@#{new_resource.instance}]", :immediately
       end
 
       file tmpl do
@@ -119,16 +119,12 @@ end
 action :start do
 
   converge_by("Starting #{new_resource.instance}") do
-    service "dirsrv-#{new_resource.instance}" do
-      service_name "dirsrv"
-      supports :status => true
-      start_command "service dirsrv start #{new_resource.instance}"
-      status_command "service dirsrv status #{new_resource.instance}"
+    systemd_unit "dirsrv@#{new_resource.instance}" do
       action :start
     end
 
     if new_resource.is_cfgdir
-      service "dirsrv-admin" do
+      systemd_unit "dirsrv-admin" do
         if new_resource.cfgdir_service_start
           action [ :enable, :start ]
         else
@@ -142,16 +138,12 @@ end
 action :stop do
 
   converge_by("Starting #{new_resource.instance}") do
-    service "dirsrv-#{new_resource.instance}" do
-      service_name "dirsrv"
-      supports :status => true
-      stop_command "service dirsrv stop #{new_resource.instance}"
-      status_command "service dirsrv status #{new_resource.instance}"
+    systemd_unit "dirsrv@#{new_resource.instance}" do
       action :stop
     end
 
     if new_resource.is_cfgdir
-      service "dirsrv-admin" do
+      systemd_unit "dirsrv-admin" do
         action :stop
       end
     end
@@ -161,16 +153,12 @@ end
 action :restart do
 
   converge_by("Starting #{new_resource.instance}") do
-    service "dirsrv-#{new_resource.instance}" do
-      service_name "dirsrv"
-      supports :status => true, :restart => true
-      restart_command "service dirsrv restart #{new_resource.instance}"
-      status_command "service dirsrv status #{new_resource.instance}"
+    systemd_unit "dirsrv@#{new_resource.instance}" do
       action :restart
     end
 
     if new_resource.is_cfgdir
-      service "dirsrv-admin" do
+      systemd_unit "dirsrv-admin" do
         action :restart
       end
     end
