@@ -4,6 +4,7 @@
 Vagrant.configure("2") do |config|
 
   config.omnibus.chef_version = "12.11.18"
+  config.ohai.plugin_path = "/etc/chef/ohai_plugins"
   config.vm.box = "generic/ubuntu1604"
 
   # Primary Master
@@ -19,6 +20,7 @@ Vagrant.configure("2") do |config|
 
     primary.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
@@ -49,6 +51,7 @@ Vagrant.configure("2") do |config|
 
     secondary.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
@@ -79,6 +82,7 @@ Vagrant.configure("2") do |config|
 
     tertiary.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
@@ -109,6 +113,7 @@ Vagrant.configure("2") do |config|
 
     quaternary.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
@@ -139,6 +144,7 @@ Vagrant.configure("2") do |config|
 
     proxyhub.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
@@ -169,6 +175,7 @@ Vagrant.configure("2") do |config|
 
     consumer.vm.provision :chef_solo do |chef|
 
+      chef.log_level = "warn"
       chef.data_bags_path = "data_bags"
       chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
