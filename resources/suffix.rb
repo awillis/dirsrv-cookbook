@@ -1,7 +1,7 @@
 # Cookbook Name:: dirsrv
-# Resource:: config
+# Resource:: suffix
 #
-# Copyright 2014 Riot Games, Inc.
+# Copyright 2015 Riot Games, Inc.
 # Author:: Alan Willis <alwillis@riotgames.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,15 @@
 # limitations under the License.
 #
 
-actions :set
-default_action :set
+actions :create
+default_action :create
 
-attribute :attr, :kind_of => String, :name_attribute => true
-attribute :value, :kind_of => [ String, Integer ], :required => true
+attribute :suffix, :kind_of => String, :name_attribute => true
+attribute :parent, :kind_of => String
+attribute :nsslapd_backend, :kind_of => String
+attribute :nsslapd_cachememsize, :kind_of => Integer
+attribute :nsslapd_dncachememsize, :kind_of => Integer
+attribute :entry_object_class_list, :kind_of => Array, :default => [ 'top', 'extensibleObject' ]
 attribute :host, :kind_of => String, :default => 'localhost'
 attribute :port, :kind_of => Integer, :default => 389
 attribute :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'

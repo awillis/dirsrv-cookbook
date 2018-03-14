@@ -3,9 +3,9 @@ maintainer       'Alan Willis'
 maintainer_email 'alwillis@riotgames.com'
 license          'All rights reserved'
 description      'Installs and configures 389 Directory Server'
-version          '0.1.2'
+version          '0.2.1'
 
-depends 'ldap', '~> 1.0'
+depends 'ldap', '~> 1.1'
 depends 'yum', '~> 3.0'
 depends 'hostsfile'
 
