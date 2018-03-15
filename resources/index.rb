@@ -21,12 +21,12 @@
 actions :create
 default_action :create
 
-attribute :name, :kind_of => String, :name_attribute => true
-attribute :database, :kind_of => String, :default => 'userRoot'
-attribute :equality, :kind_of => [ TrueClass, FalseClass ], :default => true
-attribute :presence, :kind_of => [ TrueClass, FalseClass ], :default => false
-attribute :substring, :kind_of => [ TrueClass, FalseClass ], :default => false
-attribute :host, :kind_of => String, :default => 'localhost'
-attribute :port, :kind_of => Integer, :default => 389
-attribute :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-attribute :databag_name, :kind_of => String
+property :name, :kind_of => String, :name_attribute => true
+property :database, :kind_of => String, :default => 'userRoot'
+property :equality, :kind_of => [ TrueClass, FalseClass ], :default => true
+property :presence, :kind_of => [ TrueClass, FalseClass ], :default => false
+property :substring, :kind_of => [ TrueClass, FalseClass ], :default => false
+property :host, :kind_of => String, :default => 'localhost'
+property :port, :kind_of => Integer, :default => 389
+property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
+property :databag_name, :kind_of => String

@@ -2,7 +2,7 @@
 # Cookbook Name:: dirsrv
 # Recipe:: _test_kitchen
 #
-# Copyright 2014 Riot Games, Inc.
+# Copyright 2018 Riot Games, Inc.
 # Author:: Alan Willis <alwillis@riotgames.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-# Test non-replication related LWRPs
+# Setup for testing non-replication related LWRPs
 
 include_recipe "dirsrv"
 
@@ -33,23 +33,11 @@ dirsrv_instance node[:hostname] + '_389' do
   action       [ :create, :start ]
 end
 
-# For each resource: remove, create, remove, create
-# Exercises the code in creation and removal before and after its initial existence
-
 ## Entry
 
 ldap_entry "ou=test,o=kitchen" do
   attributes ({ objectClass: [ 'organizationalUnit', 'top' ], ou: 'test' })
-  action :delete
 end
-
-ldap_entry "ou=test,o=kitchen"
-
-ldap_entry "ou=test,o=kitchen" do
-  action :delete
-end
-
-ldap_entry "ou=test,o=kitchen"
 
 ## Config
 
@@ -72,7 +60,7 @@ end
 ## User
 
 ldap_user "awillis" do
-  basedn "o=kitchen"
+  basedn "ou=test,o=kitchen"
   surname 'Willis'
   home "/home/alan"
   shell "/bin/bash"
@@ -80,31 +68,11 @@ ldap_user "awillis" do
   password "Super Cool Passwords Are Super Cool!!!!!"
 end
 
-ldap_user "test" do
-  basedn "o=kitchen"
-  surname 'Kitchen'
-  home "/home/test"
-  shell "/bin/bash"
-  is_extensible true
-end
-
 # ACI
 
-ldap_aci "allow test kitchen" do
-  distinguished_name 'uid=awillis,o=kitchen'
+ldap_aci "user aci" do
+  distinguished_name 'uid=awillis,ou=test,o=kitchen'
   rights ([ 'read', 'search', 'compare' ])
   userdn_rule ({ '=' => 'uid=test,o=kitchen' })
   day_of_week ([ 'Mon', 'Wed', 'Fri' ])
-end
-
-ldap_aci "allow test kitchen" do
-  distinguished_name 'uid=awillis,o=kitchen'
-  userdn_rule ({ '=' => 'uid=sink,o=kitchen' })
-  action :extend
-end
-
-ldap_aci "allow test kitchen" do
-  distinguished_name 'uid=awillis,o=kitchen'
-  userdn_rule ({ '=' => 'uid=test,o=kitchen' })
-  action :rescind
 end

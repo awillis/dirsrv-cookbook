@@ -20,13 +20,13 @@
 actions :create
 default_action :create
 
-attribute :suffix, :kind_of => String, :name_attribute => true
-attribute :parent, :kind_of => String
-attribute :nsslapd_backend, :kind_of => String
-attribute :nsslapd_cachememsize, :kind_of => Integer
-attribute :nsslapd_dncachememsize, :kind_of => Integer
-attribute :entry_object_class_list, :kind_of => Array, :default => [ 'top', 'extensibleObject' ]
-attribute :host, :kind_of => String, :default => 'localhost'
-attribute :port, :kind_of => Integer, :default => 389
-attribute :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-attribute :databag_name, :kind_of => String
+property :suffix, :kind_of => String, :name_attribute => true
+property :parent, :kind_of => String
+property :nsslapd_backend, :kind_of => String
+property :nsslapd_cachememsize, :kind_of => Integer
+property :nsslapd_dncachememsize, :kind_of => Integer
+property :entry_object_class_list, :kind_of => Array, :default => [ 'top', 'extensibleObject' ]
+property :host, :kind_of => String, :default => 'localhost'
+property :port, :kind_of => Integer, :default => 389
+property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
+property :databag_name, :kind_of => String

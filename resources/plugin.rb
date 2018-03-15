@@ -20,10 +20,10 @@
 actions :enable, :disable, :modify
 default_action :enable
 
-attribute :common_name, :kind_of => String, :name_attribute => true
-attribute :attributes, :kind_of => Hash, :default => {}
-attribute :append_attributes, :kind_of => Hash, :default => {}
-attribute :host, :kind_of => String, :default => 'localhost'
-attribute :port, :kind_of => Integer, :default => 389
-attribute :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-attribute :databag_name, :kind_of => String
+property :common_name, :kind_of => String, :name_attribute => true
+property :attributes, :kind_of => Hash, :default => {}
+property :append_attributes, :kind_of => Hash, :default => {}
+property :host, :kind_of => String, :default => 'localhost'
+property :port, :kind_of => Integer, :default => 389
+property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
+property :databag_name, :kind_of => String

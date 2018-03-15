@@ -1,4 +1,4 @@
 source "https://supermarket.chef.io"
 
 metadata
-cookbook "ldap", path: "../ldap-cookbook"
+cookbook "ldap", :path => "../ldap-cookbook"

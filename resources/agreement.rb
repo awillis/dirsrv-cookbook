@@ -21,26 +21,26 @@
 actions :create, :create_and_initialize
 default_action :create
 
-attribute :label, :kind_of => String, :name_attribute => true
-attribute :suffix, :kind_of => String, :required => true
-attribute :directory_type, :kind_of => String, :default => :DS
-attribute :replica_host, :kind_of => String, :required => true
-attribute :replica_port, :kind_of => [ Integer, String ], :default => 389
-attribute :replica_bind_dn, :kind_of => String, :default => 'cn=Replication Manager,cn=config'
-attribute :replica_update_schedule, :kind_of => String, :default => '0000-2359 0123456'
+property :label, :kind_of => String, :name_attribute => true
+property :suffix, :kind_of => String, :required => true
+property :directory_type, :kind_of => String, :default => 'DS'
+property :replica_host, :kind_of => String, :required => true
+property :replica_port, :kind_of => [ Integer, String ], :default => 389
+property :replica_bind_dn, :kind_of => String, :default => 'cn=Replication Manager,cn=config'
+property :replica_update_schedule, :kind_of => String, :default => '0000-2359 0123456'
 property :replica_bind_method, :kind_of => String, :default => 'SIMPLE'
-attribute :replica_transport, :kind_of => String, :default => 'LDAP'
-attribute :replica_credentials, :kind_of => String
-attribute :ds_replicated_attribute_list, :kind_of => String, :default => '(objectclass=*) $ EXCLUDE authorityRevocationList accountUnlockTime memberof'
-attribute :ds_replicated_attribute_list_total, :kind_of => String, :default => '(objectclass=*) $ EXCLUDE accountUnlockTime'
-attribute :ad_domain, :kind_of => String
-attribute :ad_new_user_sync, :kind_of => String
-attribute :ad_new_group_sync, :kind_of => String
-attribute :ad_one_way_sync, :kind_of => String
-attribute :ad_sync_interval, :kind_of => Integer, :default => 300
-attribute :ad_sync_move_action, :kind_of => [ 'none', 'delete', 'unsync' ], :default => 'none'
-attribute :ad_replica_subtree, :kind_of => String
-attribute :host, :kind_of => String, :default => 'localhost'
-attribute :port, :kind_of => Integer, :default => 389
-attribute :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-attribute :databag_name, :kind_of => String
+property :replica_transport, :kind_of => String, :default => 'LDAP'
+property :replica_credentials, :kind_of => String
+property :ds_replicated_attribute_list, :kind_of => String, :default => '(objectclass=*) $ EXCLUDE authorityRevocationList accountUnlockTime memberof'
+property :ds_replicated_attribute_list_total, :kind_of => String, :default => '(objectclass=*) $ EXCLUDE accountUnlockTime'
+property :ad_domain, :kind_of => String
+property :ad_new_user_sync, :kind_of => String
+property :ad_new_group_sync, :kind_of => String
+property :ad_one_way_sync, :kind_of => String
+property :ad_sync_interval, :kind_of => Integer, :default => 300
+property :ad_sync_move_action, :kind_of => String, :default => 'none'
+property :ad_replica_subtree, :kind_of => String
+property :host, :kind_of => String, :default => 'localhost'
+property :port, :kind_of => Integer, :default => 389
+property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
+property :databag_name, :kind_of => String

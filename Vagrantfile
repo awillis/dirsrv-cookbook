@@ -3,9 +3,26 @@
 
 Vagrant.configure("2") do |config|
 
-  config.omnibus.chef_version = "12.11.18"
-  config.ohai.plugin_path = "/etc/chef/ohai_plugins"
+  config.omnibus.chef_version = "12.14.89"
+  config.berkshelf.enabled = true
   config.vm.box = "generic/ubuntu1604"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.gui = false
+    vb.cpus = 2
+    vb.memory = 1024
+    vb.customize [
+      "modifyvm", :id,
+      "--chipset", "ich9",
+      "--vram", "10",
+      "--nictype1", "82540EM"
+    ]
+  end
+
+  config.vm.provider :libvirt do |virt|
+    virt.cpus = 2
+    virt.memory = 1024
+  end
 
   # Primary Master
   config.vm.define "primary" do |primary|
@@ -13,16 +30,11 @@ Vagrant.configure("2") do |config|
     primary.vm.hostname = "primary"
     primary.vm.network :private_network, ip: "172.31.255.10"
 
-    primary.vm.provider 'libvirt' do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    primary.vm.provision :chef_solo do |chef|
+    primary.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
@@ -44,16 +56,11 @@ Vagrant.configure("2") do |config|
     secondary.vm.hostname = "secondary"
     secondary.vm.network :private_network, ip: "172.31.255.11"
 
-    secondary.vm.provider :libvirt do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    secondary.vm.provision :chef_solo do |chef|
+    secondary.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
@@ -75,16 +82,11 @@ Vagrant.configure("2") do |config|
     tertiary.vm.hostname = "tertiary"
     tertiary.vm.network :private_network, ip: "172.31.255.12"
 
-    tertiary.vm.provider :libvirt do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    tertiary.vm.provision :chef_solo do |chef|
+    tertiary.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
@@ -106,16 +108,11 @@ Vagrant.configure("2") do |config|
     quaternary.vm.hostname = "quaternary"
     quaternary.vm.network :private_network, ip: "172.31.255.13"
 
-    quaternary.vm.provider :libvirt do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    quaternary.vm.provision :chef_solo do |chef|
+    quaternary.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
@@ -137,16 +134,11 @@ Vagrant.configure("2") do |config|
     proxyhub.vm.hostname = "proxyhub"
     proxyhub.vm.network :private_network, ip: "172.31.255.14"
 
-    proxyhub.vm.provider :libvirt do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    proxyhub.vm.provision :chef_solo do |chef|
+    proxyhub.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
@@ -168,16 +160,11 @@ Vagrant.configure("2") do |config|
     consumer.vm.hostname = "consumer"
     consumer.vm.network :private_network, ip: "172.31.255.15"
 
-    consumer.vm.provider :libvirt do |virt, o|
-      virt.cpus = 2
-      virt.memory = 2048
-    end
-
-    consumer.vm.provision :chef_solo do |chef|
+    consumer.vm.provision :chef_zero do |chef|
 
       chef.log_level = "warn"
+      chef.nodes_path = "nodes"
       chef.data_bags_path = "data_bags"
-      chef.cookbooks_path = "vagrant-cookbooks"
       chef.encrypted_data_bag_secret_key_path = "vagrant_encrypted_data_bag_secret"
       chef.synced_folder_type = "rsync"
 
