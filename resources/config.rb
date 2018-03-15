@@ -20,9 +20,9 @@
 actions :set
 default_action :set
 
-property :attr, :kind_of => String, :name_attribute => true
-property :value, :kind_of => [ String, Integer ], :required => true
-property :host, :kind_of => String, :default => 'localhost'
-property :port, :kind_of => Integer, :default => 389
-property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-property :databag_name, :kind_of => String
+property :attr, String, name_attribute: true
+property :value, [ String, Integer ], required: true
+property :host, String, default: 'localhost'
+property :port, Integer, default: 389
+property :credentials, [ String, Hash ], default: 'default_credentials'
+property :databag_name, String

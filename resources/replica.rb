@@ -21,13 +21,13 @@
 actions :create
 default_action :create
 
-property :suffix, :kind_of => String, :name_attribute => true
-property :instance, :kind_of => String, :required => true
-property :id, :kind_of => Integer
-property :role, :kind_of => Symbol, :required => true
-property :purge_delay, :kind_of => Integer, :default => 604800
-property :host, :kind_of => String, :default => 'localhost'
-property :port, :kind_of => Integer, :default => 389
-property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-property :base_dir, :kind_of => String, :default => '/var/lib/dirsrv'
-property :databag_name, :kind_of => String
+property :suffix, String, name_attribute: true
+property :instance, String, required: true
+property :id, Integer
+property :role, Symbol, :required => true
+property :purge_delay, Integer, default: 604800
+property :host, String, default: 'localhost'
+property :port, Integer, default: 389
+property :credentials, [ String, Hash ], default: 'default_credentials'
+property :base_dir, String, default: '/var/lib/dirsrv'
+property :databag_name, String

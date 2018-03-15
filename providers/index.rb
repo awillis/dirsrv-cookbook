@@ -47,7 +47,7 @@ action :create do
     nsIndexAttribute: new_resource.name + ':' + attrs.join(',') 
   }
 
-  converge_by("Creating index for #{new_resource.name} attribute") do
+  converge_if_changed("Creating index for #{new_resource.name} attribute") do
 
     ldap_entry "cn=#{new_resource.name},cn=index,cn=#{new_resource.database},cn=ldbm database,cn=plugins,cn=config" do
       host   new_resource.host

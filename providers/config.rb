@@ -26,7 +26,7 @@ end
 
 action :set do
 
-  converge_by("Setting #{new_resource.attr}: #{new_resource.value}") do
+  converge_if_changed("Setting #{new_resource.attr}: #{new_resource.value}") do
     ldap_entry new_resource.attr do
       distinguished_name 'cn=config'
       host   new_resource.host

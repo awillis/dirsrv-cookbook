@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
 
-  config.omnibus.chef_version = "12.14.89"
+  config.omnibus.chef_version = :latest
   config.berkshelf.enabled = true
   config.vm.box = "generic/ubuntu1604"
 

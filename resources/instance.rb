@@ -18,24 +18,167 @@
 # limitations under the License.
 #
 
+provides :dirsrv_instance
 actions :create, :start, :stop, :restart
 default_action :create
 
-property :instance, :kind_of => String, :name_attribute => true
-property :suffix, :kind_of => String, :required => true
-property :credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-property :host, :kind_of => String, :default => node[:fqdn]
-property :port, :kind_of => Integer, :default => 389
-property :cfgdir_domain, :kind_of => String
-property :cfgdir_credentials, :kind_of => [ String, Hash ], :default => 'default_credentials'
-property :cfgdir_addr, :kind_of => String, :default => node[:ipaddress]
-property :cfgdir_http_port, :kind_of => Integer, :default => 9830
-property :cfgdir_ldap_port, :kind_of => Integer, :default => 389
-property :cfgdir_service_start, :kind_of => [ TrueClass, FalseClass ], :default => true
-property :is_cfgdir, :kind_of => [ TrueClass, FalseClass ], :default => false
-property :has_cfgdir, :kind_of => [ TrueClass, FalseClass ], :default => false
-property :add_org_entries, :kind_of => [ TrueClass, FalseClass ], :default => false
-property :add_sample_entries, :kind_of => [ TrueClass, FalseClass ], :default => false
-property :preseed_ldif, :kind_of => String
-property :conf_dir, :kind_of => String, :default => '/etc/dirsrv'
-property :base_dir, :kind_of => String, :default => '/var/lib/dirsrv'
+property :instance, String, name_attribute: true
+property :suffix, String, required: true
+property :credentials, [ String, Hash ], default: 'default_credentials'
+property :host, String, default: node[:fqdn]
+property :port, Integer, default: 389
+property :cfgdir_domain, String
+property :cfgdir_credentials, [ String, Hash ], default: 'default_credentials'
+property :cfgdir_addr, String, default: node[:ipaddress]
+property :cfgdir_http_port, Integer, default: 9830
+property :cfgdir_ldap_port, Integer, default: 389
+property :cfgdir_service_start, [ TrueClass, FalseClass ], default: true
+property :is_cfgdir, [ TrueClass, FalseClass ], default: false
+property :has_cfgdir, [ TrueClass, FalseClass ], default: false
+property :add_org_entries, [ TrueClass, FalseClass ], default: false
+property :add_sample_entries, [ TrueClass, FalseClass ], default: false
+property :preseed_ldif, String
+property :conf_dir, String, default: '/etc/dirsrv'
+property :base_dir, String, default: '/var/lib/dirsrv'
+
+action :create do
+
+  tmpl = ::File.join new_resource.conf_dir, 'setup-' + new_resource.instance + '.inf'
+  setup = new_resource.is_cfgdir ? 'setup-ds-admin' : 'setup-ds'
+  instdir = ::File.join new_resource.conf_dir, 'slapd-' + new_resource.instance
+  mgrcreds = new_resource.credentials.kind_of?(Hash) ? new_resource.credentials.to_hash : new_resource.credentials.to_s
+  admcreds = new_resource.cfgdir_credentials.kind_of?(Hash) ? new_resource.cfgdir_credentials.to_hash : new_resource.cfgdir_credentials.to_s
+
+  if platform_family?("rhel")
+    setup += '.pl'
+  end
+
+  config = {
+    instance:    new_resource.instance,
+    suffix:      new_resource.suffix,
+    host:        new_resource.host,
+    port:        new_resource.port,
+    credentials:        mgrcreds,
+    add_org_entries:    new_resource.add_org_entries,
+    add_sample_entries: new_resource.add_sample_entries,
+    preseed_ldif:       new_resource.preseed_ldif,
+    conf_dir:           new_resource.conf_dir,
+    base_dir:           new_resource.base_dir
+  }
+
+  if config[:credentials].kind_of?(String) and config[:credentials].length > 0
+
+    # Pull named credentials from the dirsrv databag
+
+    require 'chef/data_bag_item'
+    require 'chef/encrypted_data_bag_item'
+
+    secret = Chef::EncryptedDataBagItem.load_secret
+    config[:credentials] = Chef::EncryptedDataBagItem.load( new_resource.cookbook_name, config[:credentials], secret ).to_hash
+  end
+
+  unless config[:credentials].kind_of?(Hash) and config[:credentials].key?('bind_dn') and config[:credentials].key?('password')
+    raise "Invalid credentials: #{config[:credentials]}"
+  end
+
+  if new_resource.has_cfgdir or new_resource.is_cfgdir
+
+    # Same as above, in case this is a configuration directory server, or is configured to use one
+
+    config[:is_cfgdir] = new_resource.is_cfgdir
+    config[:has_cfgdir] = new_resource.has_cfgdir
+    config[:cfgdir_addr] = new_resource.cfgdir_addr
+    config[:cfgdir_http_port] = new_resource.cfgdir_http_port
+    config[:cfgdir_ldap_port] = new_resource.cfgdir_ldap_port
+    config[:cfgdir_domain] = new_resource.cfgdir_domain
+    config[:cfgdir_credentials] = admcreds
+
+    if new_resource.cfgdir_credentials.kind_of?(String) and new_resource.cfgdir_credentials.length > 0
+
+      require 'chef/data_bag_item'
+      require 'chef/encrypted_data_bag_item'
+
+      secret = Chef::EncryptedDataBagItem.load_secret
+      config[:cfgdir_credentials] = Chef::EncryptedDataBagItem.load( new_resource.cookbook_name, config[:cfgdir_credentials], secret ).to_hash
+    end
+
+    unless config[:cfgdir_credentials].kind_of?(Hash) and config[:cfgdir_credentials].key?('username') and config[:cfgdir_credentials].key?('password')
+      raise "Invalid credentials for config directory: #{new_resource.cfgdir_credentials}"
+    end
+  end
+
+  if ::Dir.exists?(instdir)
+    Chef::Log.info("Create: Instance '#{new_resource.instance}' exists")
+  else
+    converge_if_changed("Creating new instance #{new_resource.instance}") do
+      template tmpl do
+        source "setup.inf.erb"
+        mode "0600"
+        owner "root"
+        group "root"
+        cookbook "dirsrv"
+        variables config
+      end
+
+      execute "setup-#{new_resource.instance}" do
+        command "#{setup} --silent --file #{tmpl}"
+        creates ::File.join instdir, 'dse.ldif'
+        action :nothing
+        subscribes :run, "template[#{tmpl}]", :immediately
+      end
+
+      file tmpl do
+        action :delete
+      end
+    end
+  end
+end
+
+action :start do
+
+  converge_if_changed("Starting #{new_resource.instance}") do
+    systemd_unit "dirsrv@#{new_resource.instance}" do
+      action :start
+    end
+
+    if new_resource.is_cfgdir
+      systemd_unit "dirsrv-admin" do
+        if new_resource.cfgdir_service_start
+          action [ :enable, :start ]
+        else
+          action :enable
+        end
+      end
+    end
+  end
+end
+
+action :stop do
+
+  converge_if_changed("Starting #{new_resource.instance}") do
+    systemd_unit "dirsrv@#{new_resource.instance}" do
+      action :stop
+    end
+
+    if new_resource.is_cfgdir
+      systemd_unit "dirsrv-admin" do
+        action :stop
+      end
+    end
+  end
+end
+
+action :restart do
+
+  converge_if_changed("Starting #{new_resource.instance}") do
+    systemd_unit "dirsrv@#{new_resource.instance}" do
+      action :restart
+    end
+
+    if new_resource.is_cfgdir
+      systemd_unit "dirsrv-admin" do
+        action :restart
+      end
+    end
+  end
+end

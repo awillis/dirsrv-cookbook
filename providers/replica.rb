@@ -62,7 +62,7 @@ action :create do
     attrs[:nsDS5ReplicaBindDN] = 'cn=Replication Manager,cn=config'
   end
 
-  converge_by("Registering as a #{new_resource.role} replica of #{new_resource.suffix}") do
+  converge_if_changed("Registering as a #{new_resource.role} replica of #{new_resource.suffix}") do
 
     dirsrv_plugin "Legacy Replication Plugin" do
       host   new_resource.host

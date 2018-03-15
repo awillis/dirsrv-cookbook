@@ -26,7 +26,7 @@ end
 
 action :create do
 
-  converge_by("Creating new suffix #{new_resource.suffix}") do
+  converge_if_changed("Creating new suffix #{new_resource.suffix}") do
 
     # ldbm database
 

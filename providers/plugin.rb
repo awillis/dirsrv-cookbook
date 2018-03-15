@@ -26,7 +26,7 @@ end
 
 action :enable do
 
-  converge_by("Enabling plugin: #{@new_resource.common_name}") do
+  converge_if_changed("Enabling plugin: #{@new_resource.common_name}") do
 
     ldap_entry "cn=#{new_resource.common_name},cn=plugins,cn=config" do
       host   new_resource.host
@@ -41,7 +41,7 @@ end
 
 action :modify do
 
-  converge_by("Updating plugin: #{@new_resource.common_name}") do
+  converge_if_changed("Updating plugin: #{@new_resource.common_name}") do
     ldap_entry "cn=#{new_resource.common_name},cn=plugins,cn=config" do
       host   new_resource.host
       port   new_resource.port
@@ -55,7 +55,7 @@ end
 
 action :disable do
 
-  converge_by("Disabling plugin: #{@new_resource.common_name}") do
+  converge_if_changed("Disabling plugin: #{@new_resource.common_name}") do
     ldap_entry "cn=#{new_resource.common_name},cn=plugins,cn=config" do
       host   new_resource.host
       port   new_resource.port

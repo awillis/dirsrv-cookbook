@@ -91,7 +91,7 @@ action :create do
   if ::Dir.exists?(instdir)
     Chef::Log.info("Create: Instance '#{new_resource.instance}' exists")
   else
-    converge_by("Creating new instance #{new_resource.instance}") do
+    converge_if_changed("Creating new instance #{new_resource.instance}") do
       template tmpl do
         source "setup.inf.erb"
         mode "0600"
@@ -106,7 +106,6 @@ action :create do
         creates ::File.join instdir, 'dse.ldif'
         action :nothing
         subscribes :run, "template[#{tmpl}]", :immediately
-        notifies :restart, "systemd_unit[dirsrv@#{new_resource.instance}]", :immediately
       end
 
       file tmpl do
@@ -118,7 +117,7 @@ end
 
 action :start do
 
-  converge_by("Starting #{new_resource.instance}") do
+  converge_if_changed("Starting #{new_resource.instance}") do
     systemd_unit "dirsrv@#{new_resource.instance}" do
       action :start
     end
@@ -137,7 +136,7 @@ end
 
 action :stop do
 
-  converge_by("Starting #{new_resource.instance}") do
+  converge_if_changed("Starting #{new_resource.instance}") do
     systemd_unit "dirsrv@#{new_resource.instance}" do
       action :stop
     end
@@ -152,7 +151,7 @@ end
 
 action :restart do
 
-  converge_by("Starting #{new_resource.instance}") do
+  converge_if_changed("Starting #{new_resource.instance}") do
     systemd_unit "dirsrv@#{new_resource.instance}" do
       action :restart
     end

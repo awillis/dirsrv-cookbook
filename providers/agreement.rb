@@ -85,7 +85,7 @@ action :create do
     attrs[:nsDS5ReplicatedAttributeListTotal] = new_resource.ds_replicated_attribute_list_total
   end
 
-  converge_by("Replication agreement #{new_resource.label} for #{new_resource.suffix}") do
+  converge_if_changed("Replication agreement #{new_resource.label} for #{new_resource.suffix}") do
 
     if new_resource.directory_type == :AD
       dirsrv_plugin "Posix Winsync API" do
@@ -116,7 +116,7 @@ action :create_and_initialize do
 
   action_create
 
-  converge_by("Conditional initialization of #{new_resource.label} agreement for #{new_resource.suffix} database on #{new_resource.replica_host}") do
+  converge_if_changed("Conditional initialization of #{new_resource.label} agreement for #{new_resource.suffix} database on #{new_resource.replica_host}") do
 
     ruby_block "initialize-#{new_resource.label}-#{new_resource.replica_host}" do
       block do
